@@ -1,12 +1,34 @@
 #include <iostream>
 #include <string>
 #include <typeinfo>
-#include <sstream>
+#include "helpers.h"
 
+// Constants 
+const float ECO_PRICE = 1600.00;
+const int TOTAL_SEATS = 50;
+const int FLIGHTS = 5;
+const int PAIRS = 2;
+const std::string flights[FLIGHTS][PAIRS] = 
+{
+    {"7:00", "9:30"},
+    {"9:00", "11:30"},
+    {"11:00", "13:30"},
+    {"13:00", "15:30"},
+    {"15:00", "17:30"},
+};
+
+// Structs
 struct Seating {
     std::string seat;
     bool occupied;
-} ;
+};
+
+struct Flights {
+    int flightnum;
+    std::string depart;
+    std::string arrive;
+    Seating seats[TOTAL_SEATS];
+};
 
 // Function declarations
 std::string getname();
@@ -14,19 +36,6 @@ int getflight();
 std::string getseat();
 Seating* create_seats();
 std::string to_string(int a);
-
-// Constants 
-const float ECO_PRICE = 1600.00;
-const int TOTAL_SEATS = 50;
-const int FLIGHTS = 5;
-const int PAIRS = 2;
-const std::string flights[FLIGHTS][PAIRS] = {
-    {"7:00", "9:30"},
-    {"9:00", "11:30"},
-    {"11:00", "13:30"},
-    {"13:00", "15:30"},
-    {"15:00", "17:30"},
-    };
 
 
 
@@ -71,13 +80,14 @@ int getflight(){
         else {
             std::cin.clear();
             std::cin.ignore();
-        } 
+        }
     }
 
     return time;
 }
 
 std::string getseat(){
+    std::cout << "" << std::endl;
     return "";
 }
 
@@ -102,11 +112,5 @@ Seating* create_seats(){
     }
 
     return seats;
-}
-
-std::string to_string(int a){
-    std::ostringstream s;
-    s << a;
-    return s.str();
 }
 
