@@ -29,20 +29,21 @@ struct Flights {
     int flightnum;
     std::string depart;
     std::string arrive;
-    Seating seats[TOTAL_SEATS];
+    Seating* seats;
 };
 
 // Function declarations
 std::string getname();
 Flights getflight(Flights &flights);
 std::string getseat(Flights flight);
+Seating* create_seats();
 Flights* createflights(const std::string flighttimes[FLIGHTS][PAIRS]);
 
 int main(){
     // Check if the user is ready to leave the main loop
     bool done = false;
     // Contstruct the flights object that will be used as the main flight data structure
-    Flights *flights = createflights(flighttimes);
+    Flights* flights = createflights(flighttimes);
     // std::string name = getname();
     Flights flight = getflight(*flights);
     std::string seat = getseat(flight);
@@ -72,28 +73,28 @@ Flights getflight(Flights &flights_pointer){
 
     while(!valid_time){
 
-        std::cout << "Incorrect option! Please choose from 1-5" << std::endl;
+        std::cout << message << std::endl;
         std::cin >> time;
 
         if(std::cin.good() && (time >= 1 && time <= 5)) valid_time = true;
         else {
+            message = "Incorrect option! Please choose from 1-5";
             std::cin.clear();
             std::cin.ignore();
         }
     }
 
-    return flights[time];
+    return flights[time - 1];
 }
 
 std::string getseat(Flights flight){
     std::cout << "The available seats for " << flight.depart << " are as follows:" << std::endl;
-     std::cout << "|" << flight.seats[0].seat << "|" << std::endl;
-     std::cout << "|" << flight.seats[1].seat << "|" << std::endl;
-     std::cout << "|" << flight.seats[2].seat << "|" << std::endl;
-     std::cout << "|" << flight.seats[3].seat << "|" << std::endl;
-    // for(int row = 0; row <= TOTAL_SEATS; row++){
-    //      std::cout << "|" << flight.seats[row]->seat << "|" << std::endl;
-    // }
+
+    for(int row = 0; row < TOTAL_SEATS; row++){
+         std::cout << "|" << flight.seats[row].seat << "|";
+         if((row + 1) % 3 == 0 && !((row + 1) % 6 == 0)) std::cout << "--- ";
+         if((row + 1) % 6 == 0) std::cout << std::endl;
+    }
     return "";
 }
 
@@ -112,7 +113,7 @@ Seating* create_seats(){
             Seating seat = {num, false};
             seats[k] = seat;
             k++;
-            if(k >= 49) break;
+            if(k > 49) break;
         }
         
     }
@@ -124,13 +125,12 @@ Flights* createflights(const std::string flighttimes[FLIGHTS][PAIRS]){
     static Flights flights[FLIGHTS];
 
     for(int i = 0; i < FLIGHTS; i++){
-        static Seating *seats = create_seats();
+        Seating* seats = create_seats();
         int flightnum = i + 1;
         std::string depart = flighttimes[i][0];
         std::string arrive = flighttimes[i][1];
 
-        Flights flight = {flightnum, depart, arrive, *seats};
-        // std::cout << flight.seats[1].seat << std::endl;
+        Flights flight = {flightnum, depart, arrive, seats};
         flights[i] = flight;
     }
 
