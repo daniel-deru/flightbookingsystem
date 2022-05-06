@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <typeinfo>
+#include <regex>
+#include <iomanip>
 #include "helpers.h"
 
 // Constants 
@@ -88,13 +90,37 @@ Flights getflight(Flights &flights_pointer){
 }
 
 std::string getseat(Flights flight){
+    std::string seat_number;
+    std::string message = "Please key in a seat number to choose a seat (eg: A2)";
     std::cout << "The available seats for " << flight.depart << " are as follows:" << std::endl;
-
+    std::cout << std::fixed << std::setprecision(2);
     for(int row = 0; row < TOTAL_SEATS; row++){
-         std::cout << "|" << flight.seats[row].seat << "|";
-         if((row + 1) % 3 == 0 && !((row + 1) % 6 == 0)) std::cout << "--- ";
-         if((row + 1) % 6 == 0) std::cout << std::endl;
+         Seating seat = flight.seats[row];
+
+        // Show the prices to the two classes
+        if(row  == 0) std::cout << "First Class(" << ECO_PRICE * 1.2 << ')' << std::endl;
+        if((row) == SEATS_PER_ROW * 4) std::cout << "Economy Class(" << ECO_PRICE << ')' << std::endl;
+
+        // Show the available seats
+        if(seat.occupied == true){
+            std::cout << "|**|";
+            message = "Seats that are already taken, are indicated with an asterisk\n" + message;
+        } 
+        else std::cout << "|" << flight.seats[row].seat << "|";
+
+        // Add the spacers to make the content readable
+        if((row + 1) % 3 == 0 && !((row + 1) % 6 == 0)) std::cout << "--- ";
+        if((row + 1) % 6 == 0) std::cout << std::endl;
     }
+
+    std::string s = "[A-I]{1}[1-6]{1}";
+
+    while(true){
+        std::cout << message << std::endl;
+        std::cin >> seat_number;
+        message = "Sorry, the seat is taken please choose a seat that is available";
+    }
+
     return "";
 }
 
