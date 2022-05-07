@@ -40,17 +40,26 @@ int getflight(Flights &flights);
 int getseat(Flights &flight);
 Seating* create_seats();
 Flights* createflights(const std::string flighttimes[FLIGHTS][PAIRS]);
+void display_ticket(std::string name, Flights flight, Seating seat);
 
 int main(){
     // Check if the user is ready to leave the main loop
     bool done = false;
     // Contstruct the flights object that will be used as the main flight data structure
     Flights* flights = createflights(flighttimes);
-    // std::string name = getname();
-    int flightIndex = getflight(*flights);
-    int seat = getseat(flights[flightIndex]);
 
-    std::cout << flightIndex << std::endl << seat << std::endl;
+    while(!done){
+        std::string name = getname();
+        int flightIndex = getflight(*flights);
+        int seat = getseat(flights[flightIndex]);
+        display_ticket(name, flights[flightIndex], flights[flightIndex].seats[seat]);
+
+        char cont;
+        std::cout << "Do you want to make another booking (Y/N)?" << std::endl;
+        std::cin >> cont;
+
+        if(cont == 'N' || cont == 'n') done = true;
+    }
 
     system("pause>0");
     return 0;
@@ -60,6 +69,7 @@ std::string getname(){
     std::string name;
     std::cout << "Welcome to COS1511 Flight booking system \n\nEnter full name" << std::endl;
     std::getline(std::cin, name);
+    std::cout << std::endl;
     return name;
 }
 
@@ -138,8 +148,27 @@ int getseat(Flights &flight){
     return seatNumber;
 }
 
-void display_ticket(std::string name, Flights flight){
-    
+void display_ticket(std::string name, Flights flight, Seating seat){
+    bool isFirstClass = std::regex_match(seat.seat, std::regex("[A-D]{1}[1-6]{1}"));
+
+    int price = isFirstClass ? ECO_PRICE * 1.2 : ECO_PRICE;
+    std::string cls = isFirstClass ? "First Class" : "Economy Class";
+
+    std::cout << "*************************" << std::endl;
+    std::cout << "Travel Ticket for flight" << std::endl;
+    std::cout << "*************************" << std::endl;
+    std::cout << "Name\t\t : " << name << "\t\t";
+    std::cout << "Travel Ticket Class\t: " << cls << std::endl;
+    std::cout << "\t\t\t\t\tSeat No\t\t\t: " << seat.seat << std::endl;
+    std::cout << "Departure\t: Johannesburg\t\t";
+    std::cout << "Departure time\t\t: " << flight.depart << std::endl;
+    std::cout << "Destination\t: Cape Town\t\t";
+    std::cout << "Arrival Time\t\t: " << flight.arrive << std::endl;
+    std::cout << "*************************" << std::endl;
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "Amount: R" << price << " Thank you for booking with COS1511. Your travel agent for queries is Jon Snow" << std::endl;
+    std::cout << "*************************\n" << std::endl;
+
 }
 
 Seating* create_seats(){
