@@ -36,8 +36,8 @@ struct Flights {
 
 // Function declarations
 std::string getname();
-Flights getflight(Flights &flights);
-std::string getseat(Flights flight);
+int getflight(Flights &flights);
+int getseat(Flights &flight);
 Seating* create_seats();
 Flights* createflights(const std::string flighttimes[FLIGHTS][PAIRS]);
 
@@ -47,8 +47,10 @@ int main(){
     // Contstruct the flights object that will be used as the main flight data structure
     Flights* flights = createflights(flighttimes);
     // std::string name = getname();
-    Flights flight = getflight(*flights);
-    std::string seat = getseat(flight);
+    int flightIndex = getflight(*flights);
+    int seat = getseat(flights[flightIndex]);
+
+    std::cout << flightIndex << std::endl << seat << std::endl;
 
     system("pause>0");
     return 0;
@@ -61,7 +63,7 @@ std::string getname(){
     return name;
 }
 
-Flights getflight(Flights &flights_pointer){
+int getflight(Flights &flights_pointer){
     int time;
     Flights* flights = &flights_pointer;
     std::string message = "Choose the time by entering the option number from the displayed list:";
@@ -85,14 +87,19 @@ Flights getflight(Flights &flights_pointer){
             std::cin.ignore();
         }
     }
+    std::cout << std::endl;
 
-    return flights[time - 1];
+    return time - 1;
 }
 
-std::string getseat(Flights flight){
+int getseat(Flights &flight){
+    // Flights* targetflight = &flight;
     std::string seat_number;
+    int seatNumber;
     std::string message = "Please key in a seat number to choose a seat (eg: A2)";
+
     std::cout << "The available seats for " << flight.depart << " are as follows:" << std::endl;
+
     std::cout << std::fixed << std::setprecision(2);
     for(int row = 0; row < TOTAL_SEATS; row++){
          Seating seat = flight.seats[row];
@@ -113,15 +120,26 @@ std::string getseat(Flights flight){
         if((row + 1) % 6 == 0) std::cout << std::endl;
     }
 
-    std::string s = "[A-I]{1}[1-6]{1}";
-
-    while(true){
+    std::cout << "\n" << std::endl;
+    while(!std::regex_match(seat_number, std::regex("[A-I]{1}[1-6]{1}"))){
         std::cout << message << std::endl;
         std::cin >> seat_number;
-        message = "Sorry, the seat is taken please choose a seat that is available";
+        message = "The seat you entered is not valid. Please choose a valid seat";
+        for(int i = 0; i < TOTAL_SEATS; i++){
+            Seating seat = flight.seats[i];
+            if(seat.seat == seat_number){
+                if(seat.occupied) message = "Sorry, the seat is taken please choose a seat that is available";
+                else seatNumber = i;
+            }
+        }
+        
     }
 
-    return "";
+    return seatNumber;
+}
+
+void display_ticket(std::string name, Flights flight){
+    
 }
 
 Seating* create_seats(){
